@@ -7,18 +7,15 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.drive.*;
 import java.lang.System;
+import frc.robot.Drive;
 
 /**
  * This is a demo program showing the use of the RobotDrive class, specifically
@@ -28,55 +25,33 @@ import java.lang.System;
 public class Robot extends TimedRobot {
 
   // robot
-  private DifferentialDrive FalconL;
-  private WPI_VictorSPX leftDrive;
-  private Victor elevator;
-  private WPI_VictorSPX rightDrive;
-  private WPI_TalonSRX leftDriveT;
-  private WPI_TalonSRX rightDriveT;
   private XboxController Driver;
   private XboxController operator;
 
+
+  private Drive drive;
   private int autonState;
 
   int orientation = 1;
 
   // Pneumatics
-  private DoubleSolenoid Pancake;
   private Compressor compressor;
 
   // runtime timer
   Timer runTime = new Timer();
 
+
   @Override
   public void robotInit() {
-    // Victor motor controllers
-    leftDrive = new WPI_VictorSPX(33);
-    rightDrive = new WPI_VictorSPX(30);
-    elevator = new Victor(3);
-    // Talon motor Controllers
-    leftDriveT = new WPI_TalonSRX(0);
-    rightDriveT = new WPI_TalonSRX(1);
 
-    leftDrive.follow(leftDriveT);
-    rightDrive.follow(rightDriveT);
-    
-    // Encoders
-    leftDriveT.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder);
-    rightDriveT.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder);
 
-    leftDriveT.getSelectedSensorPosition();
-    rightDriveT.getSelectedSensorPosition();
-
-    // Differential drive
-    FalconL = new DifferentialDrive(leftDrive, rightDrive);
-
+    drive = new Drive();
     // Controllers
     Driver = new XboxController(0);
     operator = new XboxController(1);
 
     // initialize pneumatics
-    Pancake = new DoubleSolenoid(0, 1);
+   
     compressor = new Compressor(0);
     compressor.setClosedLoopControl(true);
 
@@ -85,8 +60,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
 
     autonState = 0;
-    leftDriveT.setSelectedSensorPosition(0);
-    rightDriveT.setSelectedSensorPosition(0);
+   // leftDriveT.setSelectedSensorPosition(0);
+   // rightDriveT.setSelectedSensorPosition(0);
     // runTime.reset();
     // runTime.start();
 
@@ -170,26 +145,12 @@ public class Robot extends TimedRobot {
     if (Driver.getAButton()) {
       orientation *= -1;
     }
-    FalconL.tankDrive(orientation * Driver.getRawAxis(1), orientation * Driver.getRawAxis(5) * 0.9);
-
-    if (operator.getAButton()){
-      elevator.set(operator.getY() * .5);
-    } else{
-      elevator.set(0);
-    }
-    gearShifter();
-  }
-
-  private void gearShifter() {
+    drive.move(orientation * Driver.getRawAxis(1) * -1, orientation * Driver.getRawAxis(5) * -1);
 
     if (Driver.getXButton()) {
-
-      PancakeL.set(DoubleSolenoid.Value.kForward);
-      PancakeR.set(DoubleSolenoid.Value.kForward);
-    } else if (Driver.getYButton()) {
-
-      PancakeL.set(DoubleSolenoid.Value.kReverse);
-      PancakeR.set(DoubleSolenoid.Value.kReverse);
+      drive.gearShifter(true);
+    }
+    else if (Driver.getYButton())
+    drive.gearShifter(false);
     }
   }
-}

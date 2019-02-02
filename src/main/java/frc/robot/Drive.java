@@ -1,23 +1,28 @@
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import java.lang.Math;
 import edu.wpi.first.wpilibj.drive.*;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.analog.adis16448.frc.ADIS16448_IMU;
 
 public class Drive {
 
+  private WPI_VictorSPX leftDrive;
+  private WPI_VictorSPX rightDrive;
+  private WPI_TalonSRX leftDriveT;
+  private WPI_TalonSRX rightDriveT;
+  private DifferentialDrive drive;
+  private DoubleSolenoid Pancake;
+  
+  //anthony stuff below
+  private ADIS16448_IMU gyro;
+  public static final double maxTurn = 60;
+  //anthony stuff above
 
-    private WPI_VictorSPX leftDrive;
-    private WPI_VictorSPX rightDrive;
-    private WPI_TalonSRX leftDriveT;
-    private WPI_TalonSRX rightDriveT;
-    private DifferentialDrive FalconL;
-    private DoubleSolenoid Pancake;
-    
 
-
-public Drive() {
+  public Drive() {
     // VictorSPX motor controllers
     leftDrive = new WPI_VictorSPX(33);
     rightDrive = new WPI_VictorSPX(30);
@@ -30,28 +35,60 @@ public Drive() {
     leftDrive.follow(leftDriveT);
     rightDrive.follow(rightDriveT);
 
-    // Encoders
-    leftDriveT.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder);
-    rightDriveT.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder);
-
-    leftDriveT.getSelectedSensorPosition();
-    rightDriveT.getSelectedSensorPosition();
+    // sets the encoders
+    leftDriveT.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.CTRE_MagEncoder_Relative);
+    rightDriveT.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.CTRE_MagEncoder_Relative);
 
     // Differential drive
-    FalconL = new DifferentialDrive(leftDriveT, rightDriveT);
-}
+    drive = new DifferentialDrive(leftDriveT, rightDriveT);
+  }
 
-public void move(double leftSpeed, double rightSpeed) {
+  public void reset() {
+    leftDriveT.setSelectedSensorPosition(0);
+    rightDriveT.setSelectedSensorPosition(0);
+  }
 
-    FalconL.tankDrive(leftSpeed, rightSpeed);
-}
 
-public void gearShifter(boolean shifter) {
+  /*
+   * This is Anthony's miserable attempt to try and program curvature while Ian is
+   * gone, comment out if anthony is bad. 2/1/2019
+   */
+  public void move(double linearSpeed, double curveSpeed, boolean quickT) {
+    // if (driver.getAButton()) {
+    //   orientation *= -1;
+    // }
+
+    //Below is Ian's code
+    // drive.move(orientation * Driver.getRawAxis(5) * -1, orientation * Driver.getRawAxis(1) * -1);
+    // double wantTurn = Driver.getRawAxis(4);
+    // double rate = gyro.getRateZ();
+    // if (wantTurn*maxTurn < rate && (wantTurn != 1 || wantTurn != -1) && (Math.abs(rate/maxTurn - wantTurn) > 0.05)) {
+    //   wantTurn+=0.05;
+    // }
+    // else if (wantTurn*maxTurn > rate && (wantTurn != 1 || wantTurn != -1) && (Math.abs(rate/maxTurn - wantTurn) > 0.05)) {
+    //   wantTurn-=0.05;
+    // }
+
+    // drive.move(Driver.getRawAxis(1), wantTurn, 0.2 <= Driver.getRawAxis(3));
+    // Anthony code above
+
+
+    drive.curvatureDrive(linearSpeed, curveSpeed, quickT);
+  }
+
+  public void gearShifter(boolean shifter) {
+    /* jessica says:
+    if (shifter) {
+      Pancake.set(DoubleSolenoid.Value.kForward);
+    } else {
+      Pancake.set(DoubleSolenoid.Value.kReverse);
+    }
+    */
     if (shifter == true) {
-        Pancake.set(DoubleSolenoid.Value.kForward);
+      Pancake.set(DoubleSolenoid.Value.kForward);
+    } else if (shifter == false) {
+      Pancake.set(DoubleSolenoid.Value.kReverse);
     }
-    else if (shifter == false) {
-        Pancake.set(DoubleSolenoid.Value.kReverse);
-    }
+  }
+
 }
-}   

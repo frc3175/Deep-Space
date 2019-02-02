@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Elevator {
@@ -15,5 +16,10 @@ public class Elevator {
 
   public void move(double value) {
     motor.set(value);
+  }
+
+  public void dashboard() {
+    SmartDashboard.putNumber("/Subsystem/Elevator/position", motor.getSelectedSensorPosition());
+    SmartDashboard.putNumber("/Subsystem/Elevator/rate", motor.getSelectedSensorVelocity());
   }
 }

@@ -69,6 +69,24 @@ public class Drive {
     //   wantTurn-=0.05;
     // }
 
+    /*
+    double targetRatePercentage = drive.getRawAxis(4);
+    double targetRate = targetRatePercentage * maxRate
+    double currentRate = gyro.getRateZ();
+    double error = currentRate - targetRate;
+
+    // double outputRate = error * kP; // Investigate PID loop
+    // double outputRatePercentage = outputRate / maxRate;
+
+    double outputRatePercentage = targetRatePercentage;
+    if (Math.abs(outputRatePercantage) < 1 && Math.abs(error) > 0.05) {
+      outputRatePercentage += error < 0 ? 0.5 : -0.5;
+    }
+
+    final double quickTurnThreshold = 0.2;
+    drive.move(driver.getRawAxis(1), outputRatePercentage, driver.getRawAxis(3) > quickTurnThreshold);
+    */
+
     // drive.move(Driver.getRawAxis(1), wantTurn, 0.2 <= Driver.getRawAxis(3));
     // Anthony code above
 

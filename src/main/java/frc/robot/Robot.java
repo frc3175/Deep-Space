@@ -45,6 +45,13 @@ public class Robot extends TimedRobot {
   }
 
   @Override
+  public void robotPeriodic() {
+    super.robotPeriodic();
+
+    elevator.dashboard();
+  }
+
+  @Override
   public void autonomousInit() {
     auton.init();
   }

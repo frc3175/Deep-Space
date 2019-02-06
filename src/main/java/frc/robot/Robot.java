@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.TimedRobot;
 
@@ -15,13 +16,13 @@ public class Robot extends TimedRobot {
 
   // Operator
   private XboxController driver;
-  private XboxController operator;
-
+  private Joystick operator; 
   // Subsystems
   private Drive drive;
   private Elevator elevator;
   private Intake intake;
   private Auton auton;
+  private Manipulator manipulator;
 
   // Pneumatics
   private Compressor compressor;
@@ -34,12 +35,12 @@ public class Robot extends TimedRobot {
     elevator = new Elevator();
     intake = new Intake();
     auton = new Auton(drive);
-
+    manipulator = new Manipulator();
     // Controllers
     driver = new XboxController(0);
-    operator = new XboxController(1);
+    operator = new Joystick(2);
 
-    // initialize pneumatics
+    // initialize pneumaticss
     compressor = new Compressor(0);
     compressor.setClosedLoopControl(true);
   }
@@ -66,18 +67,31 @@ public class Robot extends TimedRobot {
 
     // Drive
     // left Y, right X, right shoulder
-    drive.move(driver.getRawAxis(1), driver.getRawAxis(4), driver.getRawButton(6));
+    drive.move(-driver.getRawAxis(1), -driver.getRawAxis(4), driver.getRawButton(6));
     
     // Intake
-    if (driver.getXButton()) {
-      intake.move(0.6);
-    } else if (driver.getYButton()) {
-      intake.move(-0.6);
+    if (operator.getRawButton(3)) {
+      intake.move(0.7);
+    } else if (operator.getRawButton(4)) {
+      intake.move(-0.7);
     } else {
       intake.move(0); 
     }
-    
+
+    //gearShifter
+    if (driver.getXButton()) {
+      drive.gearShifter(true);
+    } else if (driver.getAButton()) {
+      drive.gearShifter(false);
+    }
     // Elevator
     elevator.move(operator.getY());
+
+    //Hatch Release
+    manipulator.releasingHatch(operator.getRawButton(6));
+
+    //FloppyThing (Its the piston thing that makes the intake up and down)
+    manipulator.flopThingUp(operator.getRawButton(5));
+    manipulator.flopThingDown(operator.getRawButton(2));
   }
 }

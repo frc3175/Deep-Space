@@ -95,13 +95,6 @@ public class Drive {
   }
 
   public void gearShifter(boolean shifter) {
-    /* jessica says:
-    if (shifter) {
-      Pancake.set(DoubleSolenoid.Value.kForward);
-    } else {
-      Pancake.set(DoubleSolenoid.Value.kReverse);
-    }
-    */
     if (shifter == true) {
       Pancake.set(DoubleSolenoid.Value.kForward);
     } else if (shifter == false) {

@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.cscore.UsbCamera;
 
 public class Robot extends TimedRobot {
 
@@ -23,6 +25,9 @@ public class Robot extends TimedRobot {
   private Intake intake;
   private Auton auton;
   private Manipulator manipulator;
+  private Ramp ramp;
+
+
 
   // Pneumatics
   private Compressor compressor;
@@ -32,6 +37,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Subsystems
     drive = new Drive();
+    ramp = new Ramp();
     elevator = new Elevator();
     intake = new Intake();
     auton = new Auton(drive);
@@ -39,8 +45,18 @@ public class Robot extends TimedRobot {
     // Controllers
     driver = new XboxController(0);
     operator = new Joystick(2);
+    //initializes the elevator
+    elevator.elevatorInit();
+    //gyro
 
-    // initialize pneumaticss
+    //Camera
+    UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+    UsbCamera camera1 = CameraServer.getInstance().startAutomaticCapture();
+    camera.setResolution(160, 120);
+    camera.setBrightness(5);
+    camera1.setResolution(160, 120);
+    camera1.setBrightness(2);
+    // initialize pneumatics
     compressor = new Compressor(0);
     compressor.setClosedLoopControl(true);
   }
@@ -64,20 +80,25 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-
     // Drive
     // left Y, right X, right shoulder
-    drive.move(-driver.getRawAxis(1), -driver.getRawAxis(4), driver.getRawButton(6));
-    
+    double linearSpeed = -driver.getRawAxis(1);
+    double curveSpeed = -driver.getRawAxis(4);
+    if (Math.abs(linearSpeed) < 0.2) {
+      linearSpeed = 0;
+    }
+    if (Math.abs(curveSpeed) < 0.2) {
+      curveSpeed = 0;
+    }
+    drive.move(linearSpeed, curveSpeed, driver.getRawButton(6));
     // Intake
     if (operator.getRawButton(3)) {
-      intake.move(0.7);
+      intake.set(0.7);
     } else if (operator.getRawButton(4)) {
-      intake.move(-0.7);
+      intake.set(-0.7);
     } else {
-      intake.move(0); 
+      intake.set(0); 
     }
-
     //gearShifter
     if (driver.getXButton()) {
       drive.gearShifter(true);
@@ -85,13 +106,16 @@ public class Robot extends TimedRobot {
       drive.gearShifter(false);
     }
     // Elevator
-    elevator.move(operator.getY());
-
+    elevator.UpnDown(operator.getY());
     //Hatch Release
-    manipulator.releasingHatch(operator.getRawButton(6));
-
+    manipulator.releasingHatch(operator.getRawButton(1));
     //FloppyThing (Its the piston thing that makes the intake up and down)
     manipulator.flopThingUp(operator.getRawButton(5));
-    manipulator.flopThingDown(operator.getRawButton(2));
+    manipulator.flopThingDown(operator.getRawButton(6));
+    //Makes the ramp go up and down
+    ramp.servoRamp(operator.getRawButton(7));
+    ramp.pistonRamp(operator.getRawButton(8));
+    //ball holding
+    intake.toggleBallHolding(operator.getRawButtonPressed(11));
   }
 }

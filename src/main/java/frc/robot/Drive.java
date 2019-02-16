@@ -19,9 +19,11 @@ public class Drive {
   //anthony stuff below
   private ADIS16448_IMU gyro;
   public static final double maxTurn = 60;
+  private static final double P = 0.03175;
+  private static double setAngle = 0.0;
   //anthony stuff above
 
-
+  
   public Drive() {
     // VictorSPX motor controllers
     leftDrive = new WPI_VictorSPX(33);
@@ -35,6 +37,8 @@ public class Drive {
     leftDrive.follow(leftDriveT);
     rightDrive.follow(rightDriveT);
 
+    //gyro
+    //gyro = new ADIS16448_IMU();
     // sets the encoders
     leftDriveT.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.CTRE_MagEncoder_Relative);
     rightDriveT.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.CTRE_MagEncoder_Relative);
@@ -43,54 +47,19 @@ public class Drive {
     drive = new DifferentialDrive(leftDriveT, rightDriveT);
   }
 
-  public void reset() {
+   public void reset() {
     leftDriveT.setSelectedSensorPosition(0);
     rightDriveT.setSelectedSensorPosition(0);
   }
 
-
-  /*
-   * This is Anthony's miserable attempt to try and program curvature while Ian is
-   * gone, comment out if anthony is bad. 2/1/2019
-   */
   public void move(double linearSpeed, double curveSpeed, boolean quickT) {
-    // if (driver.getAButton()) {
-    //   orientation *= -1;
-    // }
-
-    //Below is Ian's code
-    // drive.move(orientation * Driver.getRawAxis(5) * -1, orientation * Driver.getRawAxis(1) * -1);
-    // double wantTurn = Driver.getRawAxis(4);
-    // double rate = gyro.getRateZ();
-    // if (wantTurn*maxTurn < rate && (wantTurn != 1 || wantTurn != -1) && (Math.abs(rate/maxTurn - wantTurn) > 0.05)) {
-    //   wantTurn+=0.05;
-    // }
-    // else if (wantTurn*maxTurn > rate && (wantTurn != 1 || wantTurn != -1) && (Math.abs(rate/maxTurn - wantTurn) > 0.05)) {
-    //   wantTurn-=0.05;
-    // }
-
-    /*
-    double targetRatePercentage = drive.getRawAxis(4);
-    double targetRate = targetRatePercentage * maxRate
-    double currentRate = gyro.getRateZ();
-    double error = currentRate - targetRate;
-
-    // double outputRate = error * kP; // Investigate PID loop
-    // double outputRatePercentage = outputRate / maxRate;
-
-    double outputRatePercentage = targetRatePercentage;
-    if (Math.abs(outputRatePercantage) < 1 && Math.abs(error) > 0.05) {
-      outputRatePercentage += error < 0 ? 0.5 : -0.5;
+    
+    /*if(curveSpeed != 0) {
+      setAngle = gyro.getAngle();
     }
-
-    final double quickTurnThreshold = 0.2;
-    drive.move(driver.getRawAxis(1), outputRatePercentage, driver.getRawAxis(3) > quickTurnThreshold);
-    */
-
-    // drive.move(Driver.getRawAxis(1), wantTurn, 0.2 <= Driver.getRawAxis(3));
-    // Anthony code above
-
-
+    else {
+      curveSpeed = (setAngle - gyro.getAngle()) * P;
+    }*/
     drive.curvatureDrive(linearSpeed, curveSpeed, quickT);
   }
 

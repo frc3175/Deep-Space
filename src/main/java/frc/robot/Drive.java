@@ -2,10 +2,12 @@ package frc.robot;
 
 import java.lang.Math;
 import edu.wpi.first.wpilibj.drive.*;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.analog.adis16448.frc.ADIS16448_IMU;
 
 public class Drive {
 
@@ -17,7 +19,7 @@ public class Drive {
   private DoubleSolenoid Pancake;
   
   //anthony stuff below
-  private ADIS16448_IMU gyro;
+  public ADXRS450_Gyro gyro;
   public static final double maxTurn = 60;
   private static final double P = 0.03175;
   private static double setAngle = 0.0;
@@ -37,14 +39,15 @@ public class Drive {
     leftDrive.follow(leftDriveT);
     rightDrive.follow(rightDriveT);
 
-    //gyro
-    //gyro = new ADIS16448_IMU();
+   // gyro
+    gyro = new ADXRS450_Gyro();
     // sets the encoders
     leftDriveT.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.CTRE_MagEncoder_Relative);
     rightDriveT.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.CTRE_MagEncoder_Relative);
 
     // Differential drive
     drive = new DifferentialDrive(leftDriveT, rightDriveT);
+
   }
 
    public void reset() {
@@ -69,6 +72,9 @@ public class Drive {
     } else if (shifter == false) {
       Pancake.set(DoubleSolenoid.Value.kReverse);
     }
+    SmartDashboard.putBoolean("Gearshifter", shifter);
   }
-
+public void calibrate() {
+  this.gyro.calibrate();
+}
 }

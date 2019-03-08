@@ -10,6 +10,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.cscore.UsbCamera;
@@ -27,13 +28,16 @@ public class Robot extends TimedRobot {
   private Manipulator manipulator;
   private Ramp ramp;
 
+  //toggle
+  boolean ButtonPressed;
+
 
 
   // Pneumatics
   private Compressor compressor;
 
 
-  @Override
+  
   public void robotInit() {
     // Subsystems
     drive = new Drive();
@@ -44,7 +48,7 @@ public class Robot extends TimedRobot {
     manipulator = new Manipulator();
     // Controllers
     driver = new XboxController(0);
-    operator = new Joystick(2);
+    operator = new Joystick(1);
     //initializes the elevator
     elevator.elevatorInit();
     //gyro
@@ -53,37 +57,41 @@ public class Robot extends TimedRobot {
     UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
     UsbCamera camera1 = CameraServer.getInstance().startAutomaticCapture();
     camera.setResolution(160, 120);
-    camera.setBrightness(5);
+    camera.setBrightness(10);
     camera1.setResolution(160, 120);
-    camera1.setBrightness(2);
+    camera1.setBrightness(10);
     // initialize pneumatics
     compressor = new Compressor(0);
     compressor.setClosedLoopControl(true);
+
+    //initialize Gyro
+    drive.calibrate();
   }
 
-  @Override
   public void robotPeriodic() {
-    super.robotPeriodic();
+    //super.robotPeriodic();
 
     elevator.dashboard();
   }
 
-  @Override
+  
   public void autonomousInit() {
     auton.init();
   }
 
-  @Override
+  
   public void autonomousPeriodic() {
     auton.periodic();
+    teleopPeriodic();
   }
 
-  @Override
+  
   public void teleopPeriodic() {
     // Drive
     // left Y, right X, right shoulder
     double linearSpeed = -driver.getRawAxis(1);
     double curveSpeed = -driver.getRawAxis(4);
+    //deadzone
     if (Math.abs(linearSpeed) < 0.2) {
       linearSpeed = 0;
     }
@@ -91,6 +99,14 @@ public class Robot extends TimedRobot {
       curveSpeed = 0;
     }
     drive.move(linearSpeed, curveSpeed, driver.getRawButton(6));
+    if(driver.getRawButton(6) == true) {
+      ButtonPressed = true;
+    } else {
+      ButtonPressed = false;
+    }
+    SmartDashboard.putNumber("CurveSpeed", curveSpeed);
+    SmartDashboard.putNumber("LinearSpeed", linearSpeed);
+    SmartDashboard.putBoolean("Quick Turn", ButtonPressed);
     // Intake
     if (operator.getRawButton(3)) {
       intake.set(0.7);
@@ -105,17 +121,28 @@ public class Robot extends TimedRobot {
     } else if (driver.getAButton()) {
       drive.gearShifter(false);
     }
-    // Elevator
+    // Elevator deadzone
+    double verticalSpeed = operator.getY();
+    if (Math.abs(verticalSpeed) < 0.07) {
+      verticalSpeed = 0;
+    }
+    //elevator
     elevator.UpnDown(operator.getY());
     //Hatch Release
     manipulator.releasingHatch(operator.getRawButton(1));
-    //FloppyThing (Its the piston thing that makes the intake up and down)
-    manipulator.flopThingUp(operator.getRawButton(5));
-    manipulator.flopThingDown(operator.getRawButton(6));
+    //Manipulator (Its the piston thing that makes the intake up and down)
+    manipulator.manipulatorUp(operator.getRawButton(5));
+    manipulator.manipulatorDown(operator.getRawButton(6));
     //Makes the ramp go up and down
     ramp.servoRamp(operator.getRawButton(7));
-    ramp.pistonRamp(operator.getRawButton(8));
+    // ramp.pistonRamp(operator.getRawButton(8));
     //ball holding
     intake.toggleBallHolding(operator.getRawButtonPressed(11));
+
+    //gyro smartDash
+    SmartDashboard.putNumber("Gyro Angle", drive.gyro.getAngle());
+    // Secure Hatch
+    // manipulator.secureHatchOn(operator.getRawButton(9));
+    // manipulator.secureHatchOff(operator.getRawButton(10));
   }
 }

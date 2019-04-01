@@ -14,12 +14,16 @@ public class Elevator {
     motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     motor.configVoltageCompSaturation(elevatorMaxVoltage);
     motor.enableVoltageCompensation(true);
-    motor.setInverted(false);
+    motor.setInverted(true);
+  
+    motor.configContinuousCurrentLimit(25);
+    motor.configPeakCurrentLimit(0);
+    motor.enableCurrentLimit(true);
   }
 
   public void UpnDown(double value) {
   
-    motor.set(value);
+    motor.set(value +-0.08);
     
   }
 

@@ -23,7 +23,8 @@ public class Drive {
   public static final double maxTurn = 60;
   private static final double P = 0.03175;
   private static double setAngle = 0.0;
-  //anthony stuff above
+  //public state
+  public int gearshift;
 
   
   public Drive() {
@@ -35,6 +36,15 @@ public class Drive {
     rightDriveT = new WPI_TalonSRX(10);
 
     Pancake = new DoubleSolenoid(0, 1);
+
+    leftDriveT.configContinuousCurrentLimit(35);
+    leftDriveT.configPeakCurrentDuration(500);
+    leftDriveT.configPeakCurrentLimit(40);
+
+    
+    rightDriveT.configContinuousCurrentLimit(35);
+    rightDriveT.configPeakCurrentDuration(500);
+    rightDriveT.configPeakCurrentLimit(40);
 
     leftDrive.follow(leftDriveT);
     rightDrive.follow(rightDriveT);
@@ -69,8 +79,10 @@ public class Drive {
   public void gearShifter(boolean shifter) {
     if (shifter == true) {
       Pancake.set(DoubleSolenoid.Value.kForward);
+      gearshift = 1;
     } else if (shifter == false) {
       Pancake.set(DoubleSolenoid.Value.kReverse);
+      gearshift = 0;
     }
     SmartDashboard.putBoolean("Gearshifter", shifter);
   }

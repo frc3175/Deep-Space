@@ -27,7 +27,7 @@ public class Manipulator {
     }
 
     public void manipulatorUp(boolean pressed) {
-        if (pressed == true) {
+        if (pressed) {
             ButtonPressed = true;
             floppyTin.set(DoubleSolenoid.Value.kForward);
             SmartDashboard.putBoolean("Manipulator", ButtonPressed);
@@ -35,7 +35,7 @@ public class Manipulator {
     }
 
     public void manipulatorDown(boolean pressed) {
-        if (pressed == true) {
+        if (pressed) {
             ButtonPressed = false;
             floppyTin.set(DoubleSolenoid.Value.kReverse);
             SmartDashboard.putBoolean("Manipulator", ButtonPressed);
@@ -44,7 +44,7 @@ public class Manipulator {
     }
 
     public void secureHatchFunction(boolean pressed) {
-        if (pressed == true) {
+        if (pressed) {
             secureHatch.set(DoubleSolenoid.Value.kReverse);
         } else {
             secureHatch.set(DoubleSolenoid.Value.kForward);

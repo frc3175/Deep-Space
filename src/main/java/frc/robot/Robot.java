@@ -162,7 +162,9 @@ public class Robot extends TimedRobot {
         verticalSpeed = 0;
       }
       // elevator
-      elevator.UpnDown(operator.getY());
+      if (!elevator.cargoShipPreset(operator.getRawButton(11)) && !elevator.levelOne(operator.getRawButton(9)) && !elevator.levelTwo(operator.getRawButton(10)) && !elevator.grabHatch(operator.getRawButton(8))) {
+        elevator.UpnDown(operator.getY());
+      }
       // Hatch Release
       manipulator.secureHatchFunction(operator.getRawButton(1));
       // Manipulator (Its the piston thing that makes the intake up and down)
@@ -181,13 +183,12 @@ public class Robot extends TimedRobot {
       if (operator.getRawButton(8)) {
         hatchState = true;
       }
-    
+
       cargoShipState = elevator.cargoShipPreset(cargoShipState);
       elevator.resetPos(operator.getRawButton(12));
       l1State = elevator.levelOne(l1State);
-      l2State =  elevator.levelTwo(l2State);
+      l2State = elevator.levelTwo(l2State);
       hatchState = elevator.grabHatch(hatchState);
-    
 
       // gyro smartDash
       SmartDashboard.putNumber("Gyro Angle", drive.gyro.getAngle());
@@ -226,30 +227,30 @@ public class Robot extends TimedRobot {
   }
 
   // public boolean hatchOn() {
-  //   if (operator.getRawButton(8)) {
-  //     if (stateOn == 0) {
-  //       if (timerOn.hasPeriodPassed(0.5)) {
-  //         stateOn++;
-  //       }
-  //     } else if (stateOn == 1) {
-  //       elevator.UpnDown(-0.8);
-  //       if (timerOn.hasPeriodPassed(0.8)) {
-  //         stateOn++;
-  //         elevator.UpnDown(0);
-  //       }
-  //     } else if (stateOn == 2) {
-  //       drive.move(-0.7, 0, false);
-  //       if (timerOn.hasPeriodPassed(1)) {
-  //         stateOn++;
-  //         drive.move(0, 0, false);
-  //       }
-  //     }
-  //   } else {
-  //     timerOn.reset();
-  //     stateOn = 0;
-  //     return false;
-  //   }
-  //   return true;
+  // if (operator.getRawButton(8)) {
+  // if (stateOn == 0) {
+  // if (timerOn.hasPeriodPassed(0.5)) {
+  // stateOn++;
+  // }
+  // } else if (stateOn == 1) {
+  // elevator.UpnDown(-0.8);
+  // if (timerOn.hasPeriodPassed(0.8)) {
+  // stateOn++;
+  // elevator.UpnDown(0);
+  // }
+  // } else if (stateOn == 2) {
+  // drive.move(-0.7, 0, false);
+  // if (timerOn.hasPeriodPassed(1)) {
+  // stateOn++;
+  // drive.move(0, 0, false);
+  // }
+  // }
+  // } else {
+  // timerOn.reset();
+  // stateOn = 0;
+  // return false;
+  // }
+  // return true;
   // }
 
   public boolean RumbleHighGear() {

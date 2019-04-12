@@ -24,7 +24,7 @@ public class Intake {
     }
   
   public void toggleBallHolding(boolean button1) {
-    if (button1 == true) {
+    if (button1) {
       holdingBallState = !holdingBallState;
       motor.setSelectedSensorPosition(0);
       SmartDashboard.putBoolean("Ball Holding", holdingBallState);

@@ -38,7 +38,6 @@ public class Elevator {
     } else {
       motor.set(0.08);
     }
-
   }
 
   public void dashboard() {
@@ -52,7 +51,7 @@ public class Elevator {
   }
 
   public boolean cargoShipPreset(boolean pressed) {
-    if (pressed == true) {
+    if (pressed) {
       if (motor.getSelectedSensorPosition() > -300000) {
         motor.set(1);
         return true;
@@ -60,20 +59,19 @@ public class Elevator {
         motor.set(0.08);
         return false;
       }
-    }
-    else {
+    } else {
       return false;
     }
   }
 
   public void resetPos(boolean pressed) {
-    if (pressed == true) {
+    if (pressed) {
       motor.setSelectedSensorPosition(0);
     }
   }
 
   public boolean levelOne(boolean pressed) {
-    if (pressed == true) {
+    if (pressed) {
       if (motor.getSelectedSensorPosition() > -120000) {
         motor.set(1);
         return true;
@@ -81,15 +79,13 @@ public class Elevator {
         motor.set(0.08);
         return false;
       }
-    }
-    else {
+    } else {
       return false;
     }
   }
-  
 
   public boolean levelTwo(boolean pressed) {
-    if (pressed == true) {
+    if (pressed) {
       if (motor.getSelectedSensorPosition() > -622000) {
         motor.set(1);
         return true;
@@ -97,13 +93,13 @@ public class Elevator {
         motor.set(0.08);
         return false;
       }
-    }
-    else {
+    } else {
       return false;
     }
   }
+
   public boolean grabHatch(boolean pressed) {
-    if (pressed == true) {
+    if (pressed) {
       if (motor.getSelectedSensorPosition() > -200000) {
         motor.set(1);
         return true;
@@ -111,8 +107,7 @@ public class Elevator {
         motor.set(0.08);
         return false;
       }
-    }
-    else {
+    } else {
       return false;
     }
   }

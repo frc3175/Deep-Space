@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+
 public class Manipulator {
 
     private Solenoid hatchPistons;
@@ -22,9 +23,9 @@ public class Manipulator {
             hatchPistons.set(true);
         } else {
             hatchPistons.set(false);
-            }
+        }
     }
-    
+
     public void manipulatorUp(boolean pressed) {
         if (pressed == true) {
             ButtonPressed = true;
@@ -40,17 +41,13 @@ public class Manipulator {
             SmartDashboard.putBoolean("Manipulator", ButtonPressed);
 
         }
-        //Not used
-    // }
-    // public void secureHatchOn(boolean pressed) {
-    //     if (pressed == true) {
-    //         secureHatch.set(DoubleSolenoid.Value.kForward);
-    //     }
-    // }
-    // public void secureHatchOff(boolean pressed) {
-    //     if (pressed == true) {
-    //         secureHatch.set(DoubleSolenoid.Value.kReverse);
-    //     }
-    // }
-}
+    }
+
+    public void secureHatchFunction(boolean pressed) {
+        if (pressed == true) {
+            secureHatch.set(DoubleSolenoid.Value.kReverse);
+        } else {
+            secureHatch.set(DoubleSolenoid.Value.kForward);
+        }
+    }
 }

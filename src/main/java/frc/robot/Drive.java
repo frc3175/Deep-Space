@@ -38,18 +38,19 @@ public class Drive {
     Pancake = new DoubleSolenoid(0, 1);
 
     leftDriveT.configContinuousCurrentLimit(35);
-    leftDriveT.configPeakCurrentDuration(500);
-    leftDriveT.configPeakCurrentLimit(40);
-
+    leftDriveT.configPeakCurrentDuration(250);
+    leftDriveT.configPeakCurrentLimit(50);
+    leftDriveT.configOpenloopRamp(.4);
     
     rightDriveT.configContinuousCurrentLimit(35);
-    rightDriveT.configPeakCurrentDuration(500);
-    rightDriveT.configPeakCurrentLimit(40);
+      rightDriveT.configPeakCurrentDuration(250);
+      rightDriveT.configPeakCurrentLimit(50);
 
-    leftDrive.follow(leftDriveT);
+      rightDriveT.configOpenloopRamp(.4);
+      leftDrive.follow(leftDriveT);
     rightDrive.follow(rightDriveT);
 
-   // gyro
+// gyro
     gyro = new ADXRS450_Gyro();
     // sets the encoders
     leftDriveT.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.CTRE_MagEncoder_Relative);
@@ -60,7 +61,7 @@ public class Drive {
 
   }
 
-   public void reset() {
+  public void reset() {
     leftDriveT.setSelectedSensorPosition(0);
     rightDriveT.setSelectedSensorPosition(0);
   }

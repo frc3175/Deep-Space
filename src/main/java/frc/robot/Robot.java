@@ -31,6 +31,9 @@ public class Robot extends TimedRobot {
   private Manipulator manipulator;
   private Ramp ramp;
   private LevelTwo leveltwo;
+  private LimeLight limeLight;
+
+  // states
   private int state = 0;
   private int stateOn = 0;
   private int RumbleState = 0;
@@ -58,6 +61,7 @@ public class Robot extends TimedRobot {
     auton = new Auton(drive);
     manipulator = new Manipulator();
     leveltwo = new LevelTwo();
+    limeLight = new LimeLight();
     // Controllers
     driver = new XboxController(0);
     operator = new Joystick(1);
@@ -80,6 +84,10 @@ public class Robot extends TimedRobot {
     camera.setBrightness(10);
     camera1.setResolution(160, 120);
     camera1.setBrightness(10);
+
+    // limeLight Camera Init
+    drive.limeLightTeleopInit();
+
     // initialize pneumatics
     compressor = new Compressor(0);
     compressor.setClosedLoopControl(true);
@@ -98,6 +106,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     auton.init();
     drive.gearShifter(false);
+    drive.limeLightAutonInit();
   }
 
   @Override
@@ -114,8 +123,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    // Drive
-    // high gear
+
+    // periodic limelight
+    limeLight.limeLight_Tracking_Periodic();
 
     // left Y, right X, right shoulder
     double linearSpeed = -driver.getRawAxis(1);
@@ -162,7 +172,8 @@ public class Robot extends TimedRobot {
         verticalSpeed = 0;
       }
       // elevator
-      if (!elevator.cargoShipPreset(operator.getRawButton(11)) && !elevator.levelOne(operator.getRawButton(9)) && !elevator.levelTwo(operator.getRawButton(10)) && !elevator.grabHatch(operator.getRawButton(8))) {
+      if (!elevator.cargoShipPreset(operator.getRawButton(11)) && !elevator.levelOne(operator.getRawButton(9))
+          && !elevator.levelTwo(operator.getRawButton(10)) && !elevator.grabHatch(operator.getRawButton(8))) {
         elevator.UpnDown(operator.getY());
       }
       // Hatch Release

@@ -4,6 +4,7 @@ import java.lang.Math;
 import edu.wpi.first.wpilibj.drive.*;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.lib.KvLib;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -15,8 +16,10 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Drive {
 
+  private KvLib kvLib;
+
   private XboxController driver;
-  // limelight stuff
+  // limelight stuff 
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
@@ -26,7 +29,7 @@ public class Drive {
   public double LimelightDrive = 0.0;
   public double LimelightSteer = 0.0;
 
-  private WPI_TalonSRX leftDrive0;
+  public WPI_TalonSRX leftDrive0;
   private WPI_TalonSRX rightDrive0;
   private WPI_TalonSRX leftDriveT;
   private WPI_TalonSRX rightDriveT;
@@ -52,6 +55,7 @@ public class Drive {
   public Drive() {
     // subsystems
     limeLight = new LimeLight();
+    kvLib = new KvLib();
 
     // VictorSPX motor controllers
     leftDrive0 = new WPI_TalonSRX(13);
@@ -95,7 +99,7 @@ public class Drive {
     // Differential drive
     drive = new DifferentialDrive(LeftMotors, RightMotors);
 
-    // Limelight shit
+    // Limelight stuff
     double steer_Limelight = driver.getX(Hand.kRight);
     double drive_Limelight = -driver.getY(Hand.kLeft);
     boolean auto_Limelight = driver.getBButton();

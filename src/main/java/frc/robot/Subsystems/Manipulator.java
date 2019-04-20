@@ -9,7 +9,7 @@ public class Manipulator {
 
     private Solenoid hatchPistons;
     private DoubleSolenoid floppyTin;
-    private DoubleSolenoid secureHatch;
+    public DoubleSolenoid secureHatch;
     boolean ButtonPressed;
 
     public Manipulator() {

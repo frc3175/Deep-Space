@@ -15,6 +15,8 @@ import frc.robot.subsystems.LevelTwo;
 import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.Manipulator;
 import frc.robot.subsystems.Ramp;
+import frc.robot.subsystems.Operator;
+import frc.robot.subsystems.lib.*;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Encoder;
@@ -30,8 +32,12 @@ import edu.wpi.cscore.UsbCamera;
 public class Robot extends TimedRobot {
 
   // Operator
+  public int operatorPort = 1;
+  public Joystick operator;
+  //driver
   private XboxController driver;
-  private Joystick operator;
+  public int driverPort = 0;
+
   // Subsystems
   private Drive drive;
   private Elevator elevator;
@@ -41,6 +47,10 @@ public class Robot extends TimedRobot {
   private Ramp ramp;
   private LevelTwo leveltwo;
   private LimeLight limeLight;
+  private Operator operatorClass;
+
+  //library
+  private KvLib kvlib;
 
   // states
   private int state = 0;
@@ -71,9 +81,12 @@ public class Robot extends TimedRobot {
     manipulator = new Manipulator();
     leveltwo = new LevelTwo();
     limeLight = new LimeLight();
+    operatorClass = new Operator();
+    //library
+    kvlib = new KvLib();
     // Controllers
-    driver = new XboxController(0);
-    operator = new Joystick(1);
+    driver = new XboxController(driverPort);
+    operator = new Joystick(operatorPort);
     // initializes the elevator
     elevator.elevatorInit();
     // gyro
@@ -132,6 +145,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    operatorClass.periodicMethods();
 
     // periodic limelight
     limeLight.limeLight_Tracking_Periodic();
@@ -186,10 +200,13 @@ public class Robot extends TimedRobot {
         elevator.UpnDown(operator.getY());
       }
       // Hatch Release
-      manipulator.secureHatchFunction(operator.getRawButton(1));
+      //temporarily commented out to test operatorClass
+      //manipulator.secureHatchFunction(operator.getRawButton(1));
       // Manipulator (Its the piston thing that makes the intake up and down)
       manipulator.manipulatorUp(operator.getRawButton(5));
       manipulator.manipulatorDown(operator.getRawButton(6));
+
+      
       // Elevator presets
       if (operator.getRawButton(10)) {
         l2State = true;
